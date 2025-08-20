@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# Configured as part of the DigitalOcean 1-Click Image build process
+
+myip=$(hostname -I | awk '{print$1}')
+cat <<EOF
+********************************************************************************
+
+Welcome to DigitalOcean's 1-Click Immich Droplet.
+
+Service is running under user "immich".
+
+You can switch to this user with:
+
+su - immich
+
+You can access the website or the mobile app at https://$(hostname -I | awk '{print$1}')
+---------------------------------------------------
+If you want to configure custom information of the server, including the database, Redis information, or the backup (or upload) location, etc.
+  
+  1. Login to the immich user with: 'su - immich'
+
+  2. Change to the immich-app directory 'cd ~/immich-app/' and bring down the containers with the command 'docker compose down'
+
+  3. Then change the information that fits your needs in the '.env' file,
+
+  4. Finally, bring the containers back up with the command 'docker compose up --remove-orphans -d' in the immich-app directory
+
+
+For help and more information, visit https://immich.app
+
+********************************************************************************
+
+To delete this message of the day: rm -rf $(readlink -f ${0})
+EOF

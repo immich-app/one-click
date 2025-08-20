@@ -1,0 +1,15 @@
+
+services:
+  caddy:
+    container_name: immich_caddy
+    image: caddy:2-alpine
+    depends_on:
+      - immich-server
+    ports:
+      - 443:443
+      - 80:80
+    volumes:
+      - ${CADDY_LOCATION:-./caddy}/Caddyfile:/etc/caddy/Caddyfile
+      - ${CADDY_LOCATION:-./caddy}/caddy_conf:/config
+      - ${CADDY_LOCATION:-./caddy}/caddy_data:/data
+    restart: always
