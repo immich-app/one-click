@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Remove the docker service so we can run docker rootless
+#sudo systemctl disable --now docker.service docker.socket
+
+#sudo rm /var/run/docker.sock
+
+# Install docker rootless pre-requisites
+sudo apt-get update
+sudo apt-get upgrade -y
+
+sudo loginctl enable-linger root
+sudo loginctl enable-linger immich
+
+chown -R immich:immich /opt/immich/
+
+mkdir -p /home/immich/.config/docker/ ; echo '{"exec-opts": ["native.cgroupdriver=cgroupfs"]}' > /home/immich/.config/docker/daemon.json
+
+chown -R immich:immich /home/immich/.config/
+
+
+/bin/su -l -s "/bin/bash" -c 'cd /home/immich ; /opt/immich/init.sh' immich
+
+# Wait for immich to start
+sleep 120
+
+echo "immich init done"
