@@ -1,0 +1,28 @@
+name: DigitalOcean Build and Deploy
+
+on:
+  push:
+    branches:
+      - kenny-do-packer
+env:
+  PRODUCT_VERSION: "1.10.0" # or: "latest"
+
+jobs:
+  packer:
+    runs-on: ubuntu-latest
+    name: Run Packer
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: ${{ env.PRODUCT_VERSION }}
+
+      - name: Build digitalocean snapshot
+        id: dobuild
+        run: "cd ./digital-ocean && packer build template.json"
+        env:
+          DIGITALOCEAN_API_TOKEN: ${{ secrets.DIGITALOCEAN_API_TOKEN }}
