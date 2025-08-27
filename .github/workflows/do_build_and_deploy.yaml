@@ -5,7 +5,7 @@ on:
     branches:
       - main
 env:
-  PRODUCT_VERSION: "1.10.0" # or: "latest"
+  PRODUCT_VERSION: "1.10.0" # packer version.
 
 jobs:
   packer:
