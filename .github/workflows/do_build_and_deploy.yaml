@@ -23,6 +23,6 @@ jobs:
 
       - name: Build digitalocean snapshot
         id: dobuild
-        run: "cd ./digital-ocean && packer build template.json"
+        run: "cd ./digital-ocean && packer plugins install github.com/digitalocean/digitalocean && packer build template.json"
         env:
           DIGITALOCEAN_API_TOKEN: ${{ secrets.DIGITALOCEAN_API_TOKEN }}
