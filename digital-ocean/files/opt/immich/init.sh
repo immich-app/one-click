@@ -90,7 +90,7 @@ chmod 775 /opt/immich/installed-version.txt
 if [ "$(cat /opt/immich/current-version.txt)" = "$(cat /opt/immich/installed-version.txt)" ]; then
     echo "No new version found, skipping pull"
 else
-    docker compose pull --policy always
+    docker compose pull --quiet --policy always
     cp /opt/immich/current-version.txt /opt/immich/current-version.txt.bak
     cp /opt/immich/current-version.txt /opt/immich/installed-version.txt
 fi
@@ -99,7 +99,7 @@ if [ "$1" = "skip-run" ]; then
     echo "Skipping immich run"
 else
     # Start immich
-    docker compose up --remove-orphans -d
+    docker compose up --remove-orphans -d --quiet-pull
 fi
 
 echo "Finished immich init"
