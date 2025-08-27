@@ -3,7 +3,7 @@ name: DigitalOcean Build and Deploy
 on:
   push:
     branches:
-      - kenny-do-packer
+      - main
 env:
   PRODUCT_VERSION: "1.10.0" # or: "latest"
 
