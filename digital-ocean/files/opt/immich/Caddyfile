@@ -1,0 +1,19 @@
+{
+  on_demand_tls {
+    ask http://localhost:5555/check
+  }
+}
+
+:443 {
+    tls {
+        on_demand
+        # Try ACME first (fails fast for IPs), then internal
+        issuer acme
+        issuer internal
+    }
+    reverse_proxy http://immich-server:2283
+}
+
+http://localhost:5555 {
+    respond /check 200
+}
