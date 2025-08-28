@@ -3,9 +3,7 @@ name: DigitalOcean Build and Deploy
 on:
   push:
     branches:
-      - main
-env:
-  PRODUCT_VERSION: "1.10.0" # packer version.
+      - '**'
 
 jobs:
   packer:
@@ -16,13 +14,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup `packer`
-        uses: hashicorp/setup-packer@main
+        uses: hashicorp/setup-packer@v3.1.0
         id: setup
         with:
-          version: ${{ env.PRODUCT_VERSION }}
+          version: "1.10.0"
+
+      - name: Run `packer init`
+        id: doinit
+        run: "packer init ./digital-ocean/init.pkr.hcl"
 
       - name: Build digitalocean snapshot
         id: dobuild
-        run: "cd ./digital-ocean && packer plugins install github.com/digitalocean/digitalocean && packer build template.json"
+        run: "cd ./digital-ocean && packer build template.json"
         env:
           DIGITALOCEAN_API_TOKEN: ${{ secrets.DIGITALOCEAN_API_TOKEN }}
