@@ -5,6 +5,11 @@ on:
     branches:
       - '**'
 
+env:
+  IMMICH_TEST_RUN_TIMEOUT: 300 # 5 minutes - timeout for immich test
+  IMMICH_TEST_RUN_ENDPOINT: "https://localhost/api/server/ping" # endpoint to test immich during build
+  IMMICH_TEST_RUN_SLEEP_TIME: 10 # time between tests
+
 jobs:
   packer:
     runs-on: ubuntu-latest
