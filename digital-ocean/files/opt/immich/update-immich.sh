@@ -23,7 +23,7 @@ fi
 docker compose down
 curl -fsSL https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml -o docker-compose.yml
 /opt/immich/add-caddy.sh "$PWD/.."
-docker compose pull --policy always
+docker compose pull --policy always --quiet
 docker compose up --remove-orphans -d
 
 cp /opt/immich/current-version.txt /opt/immich/installed-version.txt
