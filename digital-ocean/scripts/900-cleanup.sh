@@ -30,10 +30,16 @@ printf "\n${GREEN}Writing zeros to the remaining disk space to securely
 erase the unused portion of the file system.
 Depending on your disk size this may take several minutes.
 The secure erase will complete successfully when you see:${NC}
-    dd: writing to '/zerofile': No space left on device\n
-Beginning secure erase now\n"
+    writing to '/zerofile': No space left on device\n
+"
 
-dd if=/dev/zero of=/zerofile &
+if [ "$GITHUB_REF_NAME" == main ]; then
+  printf "\n${GREEN} Erasing with dd"
+  dd if=/dev/zero of=/zerofile &
+else
+  printf "\n${GREEN} Erasing with fallocate"
+  fallocate -l 10G /zerofile &
+fi
   PID=$!
   while [ -d /proc/$PID ]
     do
@@ -43,3 +49,4 @@ dd if=/dev/zero of=/zerofile &
 sync; rm /zerofile; sync
 cat /dev/null > /var/log/lastlog; cat /dev/null > /var/log/wtmp
 sudo apt-get --yes purge droplet-agent*
+
