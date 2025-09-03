@@ -112,18 +112,15 @@ mkdir -p /home/immich/.config/systemd
 
 chown -R immich:immich /home/immich/.config/
 
-# Set up immich as the immich user so that we have a clean ready environment.
+# Reload sysctl.conf to open port 80
+sudo sysctl -p /etc/sysctl.conf
+
+# Set up immich as the immich user so that we have a clean ready environment, and start it
 /bin/su -l -s "/bin/bash" -c 'cd /home/immich ; HOME=/home/immich USER=immich PATH=/usr/bin:/sbin:/usr/sbin:$PATH /opt/immich/init.sh skip-run' immich
 
 echo "immich init done"
 
 ### Test the immich install ###
-
-# Reload sysctl.conf to open port 80
-sudo sysctl -p /etc/sysctl.conf
-
-
-/bin/su -l -s "/bin/bash" -c 'cd /home/immich/immich-app ; docker compose up -d' immich
 
 if [[ ! -v IMMICH_TEST_RUN_TIMEOUT ]]; then 
     # Time to wait for immich to be ready on test.
@@ -170,6 +167,8 @@ sudo loginctl enable-linger immich
 
 rm -rf /home/immich/immich-app/
 rm -rf /home/immich/immich-db/
+
+chown -R immich:immich /opt/immich
 
 mkdir -p /var/lib/digitalocean/
 

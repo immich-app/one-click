@@ -2,6 +2,13 @@
 
 cd $HOME
 
+
+# Set a branch to main if not available.
+if [[ ! -v GITHUB_REF_NAME ]]; then 
+    # Time between tests.
+    GITHUB_REF_NAME="main"
+fi
+
 echo "Installing immich in $HOME"
 
 if [ $(cat $HOME/.bashrc | grep "docker.sock" | wc -l) -eq 0 ]; then
@@ -44,11 +51,13 @@ if [ $(docker ps -q -f name=immich_server) ]; then
 fi
 
 # Set install script
-curl -o- https://raw.githubusercontent.com/immich-app/immich/main/install.sh > /opt/immich/install-temp.sh
+curl -o- https://raw.githubusercontent.com/immich-app/immich/$GITHUB_REF_NAME/install.sh > /tmp/install-temp.sh
 
 # if we downlaoded install-temp.sh, then we need to copy it over install.sh
 if [ $(cat /opt/immich/install-temp.sh | grep ".env" | wc -l) -gt 0 ]; then
-    cp /opt/immich/install-temp.sh /opt/immich/install.sh
+    echo "Copying new install script"
+    cp /tmp/install-temp.sh /opt/immich/install.sh
+    chmod +x /opt/immich/install.sh
 fi
 
 
@@ -79,27 +88,20 @@ sed -i -e "s|DB_DATA_LOCATION=.*|DB_DATA_LOCATION=$HOME\/immich-db\/postgres|g" 
 
 mkdir -p $HOME/immich-db/
 
-# Get the current version
-curl https://github.com/immich-app/immich/releases/latest  -s -L -I -o /dev/null -w '%{url_effective}' | sed 's|.*\/releases\/tag\/||g' > /opt/immich/current-version.txt
-chmod 775 /opt/immich/current-version.txt
+# Set update script
+curl -o- https://raw.githubusercontent.com/immich-app/one-click/refs/heads/$GITHUB_REF_NAME/digital-ocean/files/opt/immich/update-immich.sh  > /tmp/update-immich-temp.sh
 
-touch /opt/immich/installed-version.txt
-chmod 775 /opt/immich/installed-version.txt
+if [ $(grep 'docker-compose.yml' /tmp/update-immich-temp.sh | wc -l) -gt 0 ]; then
+   echo "Using new update script."
+   cp /tmp/update-immich-temp.sh /opt/immich/update-immich.sh
+   chmod +x /opt/immich/update-immich.sh
+fi 
 
-# Pull the latest version if needed.
-if [ "$(cat /opt/immich/current-version.txt)" = "$(cat /opt/immich/installed-version.txt)" ]; then
-    echo "No new version found, skipping pull"
-else
-    docker compose pull --quiet --policy always
-    cp /opt/immich/current-version.txt /opt/immich/current-version.txt.bak
-    cp /opt/immich/current-version.txt /opt/immich/installed-version.txt
-fi
+# Check for update and run
+/opt/immich/update-immich.sh $1
 
-if [ "$1" = "skip-run" ]; then 
-    echo "Skipping immich run"
-else
-    # Start immich
-    docker compose up --remove-orphans -d --quiet-pull
-fi
+
+# start immich
+docker compose up --remove-orphans -d
 
 echo "Finished immich init"
