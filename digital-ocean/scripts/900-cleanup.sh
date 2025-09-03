@@ -33,7 +33,14 @@ The secure erase will complete successfully when you see:${NC}
     writing to '/zerofile': No space left on device\n
 "
 
-if [ "$GITHUB_REF_NAME" == main ]; then
+if [[ ! -v IMMICH_TEST_PROD_BRANCH ]]; then 
+    # Time between tests.
+    IMMICH_TEST_PROD_BRANCH="main"
+fi
+
+echo "on branch $IMMICH_TEST_PROD_BRANCH"
+
+if [ "$GITHUB_REF_NAME" == "$IMMICH_TEST_PROD_BRANCH" ]; then
   printf "\n${GREEN} Erasing with dd"
   dd if=/dev/zero of=/zerofile &
 else
