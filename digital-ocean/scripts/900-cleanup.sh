@@ -38,21 +38,24 @@ if [[ ! -v IMMICH_TEST_PROD_BRANCH ]]; then
     IMMICH_TEST_PROD_BRANCH="main"
 fi
 
+# Set a branch to main if not available.
+if [[ ! -v ci_branch_name ]]; then 
+    # Time between tests.
+    IMMICH_BRANCH_REF_NAME="main"
+else
+    IMMICH_BRANCH_REF_NAME="$ci_branch_name"
+fi
+
 echo "on branch $IMMICH_TEST_PROD_BRANCH"
 
-if [ "$GITHUB_REF_NAME" == "$IMMICH_TEST_PROD_BRANCH" ]; then
+if [ "$IMMICH_BRANCH_REF_NAME" == "$IMMICH_TEST_PROD_BRANCH" ]; then
   printf "\n${GREEN} Erasing with dd"
-  dd if=/dev/zero of=/zerofile &
+  dd if=/dev/zero of=/zerofile
 else
   printf "\n${GREEN} Erasing with fallocate"
-  fallocate -l 10G /zerofile &
+  fallocate -l 10G /zerofile
 fi
-  PID=$!
-  while [ -d /proc/$PID ]
-    do
-      printf "."
-      sleep 5
-    done
+
 sync; rm /zerofile; sync
 cat /dev/null > /var/log/lastlog; cat /dev/null > /var/log/wtmp
 sudo apt-get --yes purge droplet-agent*

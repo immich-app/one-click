@@ -5,7 +5,8 @@
     "apt_packages": "apt-transport-https ca-certificates curl jq linux-image-extra-virtual software-properties-common ",
     "application_name": "Immich",
     "application_version": "latest",
-    "docker_compose_version": ""
+    "docker_compose_version": "",
+    "ci_branch_name": "{{env `GITHUB_REF_NAME`}}"
   },
   "sensitive-variables": [
     "do_api_token"
@@ -67,7 +68,8 @@
         "DEBIAN_FRONTEND=noninteractive",
         "LC_ALL=C",
         "LANG=en_US.UTF-8",
-        "LC_CTYPE=en_US.UTF-8"
+        "LC_CTYPE=en_US.UTF-8",
+        "ci_branch_name={{user `ci_branch_name`}}"
       ],
       "scripts": [
         "scripts/010-docker.sh",

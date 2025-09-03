@@ -4,12 +4,14 @@ cd $HOME
 
 
 # Set a branch to main if not available.
-if [[ ! -v GITHUB_REF_NAME ]]; then 
+if [[ ! -v ci_branch_name ]]; then 
     # Time between tests.
-    GITHUB_REF_NAME="main"
+    IMMICH_BRANCH_REF_NAME="main"
+else
+    IMMICH_BRANCH_REF_NAME="$ci_branch_name"
 fi
 
-echo "Installing immich in $HOME"
+echo "Installing immich in $HOME from branch $IMMICH_BRANCH_REF_NAME"
 
 if [ $(cat $HOME/.bashrc | grep "docker.sock" | wc -l) -eq 0 ]; then
     echo "Adding docker.sock to .bashrc"
@@ -51,7 +53,7 @@ if [ $(docker ps -q -f name=immich_server) ]; then
 fi
 
 # Set install script
-curl -o- https://raw.githubusercontent.com/immich-app/immich/$GITHUB_REF_NAME/install.sh > /tmp/install-temp.sh
+curl -o- https://raw.githubusercontent.com/immich-app/immich/$IMMICH_BRANCH_REF_NAME/install.sh > /tmp/install-temp.sh
 
 # if we downlaoded install-temp.sh, then we need to copy it over install.sh
 if [ $(cat /opt/immich/install-temp.sh | grep ".env" | wc -l) -gt 0 ]; then
@@ -89,7 +91,7 @@ sed -i -e "s|DB_DATA_LOCATION=.*|DB_DATA_LOCATION=$HOME\/immich-db\/postgres|g" 
 mkdir -p $HOME/immich-db/
 
 # Set update script
-curl -o- https://raw.githubusercontent.com/immich-app/one-click/refs/heads/$GITHUB_REF_NAME/digital-ocean/files/opt/immich/update-immich.sh  > /tmp/update-immich-temp.sh
+curl -o- https://raw.githubusercontent.com/immich-app/one-click/refs/heads/$IMMICH_BRANCH_REF_NAME/digital-ocean/files/opt/immich/update-immich.sh  > /tmp/update-immich-temp.sh
 
 if [ $(grep 'docker-compose.yml' /tmp/update-immich-temp.sh | wc -l) -gt 0 ]; then
    echo "Using new update script."
