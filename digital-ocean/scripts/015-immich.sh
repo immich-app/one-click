@@ -24,6 +24,10 @@ mkdir -p $HOME/immich-app/caddy
 echo "${application_version}" > /opt/immich/version.txt
 chmod 755 /opt/immich/version.txt
 
+# Set branch
+echo "${ci_branch_name}" > /opt/immich/branch.txt
+chmod 755 /opt/immich/branch.txt
+
 # Set install script
 curl -o- https://raw.githubusercontent.com/immich-app/immich/main/install.sh > /opt/immich/install-temp.sh
 

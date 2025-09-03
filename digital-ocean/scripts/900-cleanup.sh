@@ -38,13 +38,8 @@ if [[ ! -v IMMICH_TEST_PROD_BRANCH ]]; then
     IMMICH_TEST_PROD_BRANCH="main"
 fi
 
-# Set a branch to main if not available.
-if [[ ! -v ci_branch_name ]]; then 
-    # Time between tests.
-    IMMICH_BRANCH_REF_NAME="main"
-else
-    IMMICH_BRANCH_REF_NAME="$ci_branch_name"
-fi
+# Get branch
+IMMICH_BRANCH_REF_NAME=$(cat /opt/immich/branch.txt | tr '\n' '')
 
 echo "on branch $IMMICH_TEST_PROD_BRANCH"
 

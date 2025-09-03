@@ -2,13 +2,11 @@
 
 cd $HOME
 
+# Get branch
+IMMICH_BRANCH_REF_NAME=$(cat /opt/immich/branch.txt | tr '\n' '')
 
-# Set a branch to main if not available.
-if [[ ! -v ci_branch_name ]]; then 
-    # Time between tests.
+if [[ "$IMMICH_BRANCH_REF_NAME" == "" ]]; then 
     IMMICH_BRANCH_REF_NAME="main"
-else
-    IMMICH_BRANCH_REF_NAME="$ci_branch_name"
 fi
 
 echo "Installing immich in $HOME from branch $IMMICH_BRANCH_REF_NAME"

@@ -6,7 +6,11 @@
     "application_name": "Immich",
     "application_version": "latest",
     "docker_compose_version": "",
-    "ci_branch_name": "{{env `GITHUB_REF_NAME`}}"
+    "ci_branch_name": "{{env `GITHUB_IMMICH_BRANCH`}}",
+    "immich_test_run_timeout": "{{env `IMMICH_TEST_RUN_TIMEOUT`}}",
+    "immich_test_run_endpoint": "{{env `IMMICH_TEST_RUN_ENDPOINT`}}",
+    "immich_test_run_sleep_time": "{{env `IMMICH_TEST_RUN_SLEEP_TIME`}}",
+    "immich_test_prod_branch": "{{env `IMMICH_TEST_PROD_BRANCH`}}"
   },
   "sensitive-variables": [
     "do_api_token"
@@ -69,7 +73,11 @@
         "LC_ALL=C",
         "LANG=en_US.UTF-8",
         "LC_CTYPE=en_US.UTF-8",
-        "ci_branch_name={{user `ci_branch_name`}}"
+        "CI_REF={{user `ci_branch_name`}}",
+        "IMMICH_TEST_RUN_TIMEOUT={{user `immich_test_run_timeout`}}",
+        "IMMICH_TEST_RUN_ENDPOINT={{user `immich_test_run_endpoint`}}",
+        "IMMICH_TEST_RUN_SLEEP_TIME={{user `immich_test_run_sleep_time`}}",
+        "IMMICH_TEST_PROD_BRANCH={{user `immich_test_run_prod_branch`}}"
       ],
       "scripts": [
         "scripts/010-docker.sh",
