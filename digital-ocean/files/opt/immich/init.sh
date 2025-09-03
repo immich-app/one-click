@@ -3,7 +3,7 @@
 cd $HOME
 
 # Get branch
-IMMICH_BRANCH_REF_NAME=$(cat /opt/immich/branch.txt | tr '\n' '')
+IMMICH_BRANCH_REF_NAME=$(cat /opt/immich/branch.txt | tr -d '\n')
 
 if [[ "$IMMICH_BRANCH_REF_NAME" == "" ]]; then 
     IMMICH_BRANCH_REF_NAME="main"
