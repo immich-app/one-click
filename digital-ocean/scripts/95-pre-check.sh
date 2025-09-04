@@ -10,3 +10,4 @@ sudo apt-get --yes purge droplet-agent*
 cat /dev/null > /var/log/auth.log
 cat /dev/null > /var/log/kern.log
 cat /dev/null > /var/log/ufw.log
+cat /dev/null > /var/log/dpkg.log
