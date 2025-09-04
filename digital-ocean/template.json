@@ -4,7 +4,7 @@
     "image_name": "immich-24-04-snapshot-{{timestamp}}",
     "apt_packages": "apt-transport-https ca-certificates curl jq linux-image-extra-virtual software-properties-common ",
     "application_name": "Immich",
-    "application_version": "latest",
+    "application_version": "release",
     "docker_compose_version": "",
     "ci_branch_name": "{{env `GITHUB_IMMICH_BRANCH`}}",
     "immich_test_run_timeout": "{{env `IMMICH_TEST_RUN_TIMEOUT`}}",
@@ -87,7 +87,9 @@
         "scripts/015-immich.sh",
         "scripts/016-ufw-immich.sh",
         "scripts/020-application-tag.sh",
-        "scripts/900-cleanup.sh"
+        "scripts/90-cleanup.sh",
+        "scripts/95-pre-check.sh",
+        "scripts/99-img-check.sh"
       ]
     }
   ]

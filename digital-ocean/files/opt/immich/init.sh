@@ -102,6 +102,6 @@ fi
 
 
 # start immich
-docker compose up --remove-orphans -d
+docker compose up --remove-orphans -d --quiet-pull
 
 echo "Finished immich init"
