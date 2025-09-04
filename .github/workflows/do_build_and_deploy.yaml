@@ -1,0 +1,37 @@
+name: DigitalOcean Build and Deploy
+
+on:
+  push:
+    branches:
+      - '**'
+
+env:
+  IMMICH_TEST_RUN_TIMEOUT: 300 # 5 minutes - timeout for immich test
+  IMMICH_TEST_RUN_ENDPOINT: "https://localhost/api/server/ping" # endpoint to test immich during build
+  IMMICH_TEST_RUN_SLEEP_TIME: 10 # time between tests
+  IMMICH_TEST_PROD_BRANCH: "main"
+
+jobs:
+  packer:
+    runs-on: ubuntu-latest
+    name: Run DigitalOcean Build and Deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@v3.1.0
+        id: do_setup
+        with:
+          version: "1.10.0" # packer version
+
+      - name: Run `packer init`
+        id: do_init
+        run: "packer init ./digital-ocean/init.pkr.hcl"
+
+      - name: Build digitalocean snapshot
+        id: do_build
+        run: "cd ./digital-ocean && packer build template.json"
+        env:
+          DIGITALOCEAN_API_TOKEN: ${{ secrets.DIGITALOCEAN_API_TOKEN }}
+          GITHUB_IMMICH_BRANCH: ${{ github.ref_name }}

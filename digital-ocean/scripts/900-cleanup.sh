@@ -30,16 +30,32 @@ printf "\n${GREEN}Writing zeros to the remaining disk space to securely
 erase the unused portion of the file system.
 Depending on your disk size this may take several minutes.
 The secure erase will complete successfully when you see:${NC}
-    dd: writing to '/zerofile': No space left on device\n
-Beginning secure erase now\n"
+    writing to '/zerofile': No space left on device\n
+"
 
-dd if=/dev/zero of=/zerofile &
-  PID=$!
-  while [ -d /proc/$PID ]
-    do
-      printf "."
-      sleep 5
-    done
+if [[ ! -v IMMICH_TEST_PROD_BRANCH ]]; then 
+    # Time between tests.
+    IMMICH_TEST_PROD_BRANCH="main"
+fi
+
+# Get branch
+IMMICH_BRANCH_REF_NAME=$(cat /opt/immich/branch.txt | tr -d '\n')
+
+if [[ "$IMMICH_BRANCH_REF_NAME" == "" ]]; then 
+    IMMICH_BRANCH_REF_NAME="main"
+fi
+
+echo "on branch $IMMICH_TEST_PROD_BRANCH"
+
+if [ "$IMMICH_BRANCH_REF_NAME" == "$IMMICH_TEST_PROD_BRANCH" ]; then
+  printf "\n${GREEN} Erasing with dd"
+  dd if=/dev/zero of=/zerofile
+else
+  printf "\n${GREEN} Erasing with fallocate"
+  fallocate -l 10G /zerofile
+fi
+
 sync; rm /zerofile; sync
 cat /dev/null > /var/log/lastlog; cat /dev/null > /var/log/wtmp
 sudo apt-get --yes purge droplet-agent*
+

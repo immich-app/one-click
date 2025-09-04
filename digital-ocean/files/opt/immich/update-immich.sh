@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ $(ls -l | grep "docker-compose.yml" | wc -l) -eq 0 ]; then
     echo "Unable to run update-immich.sh"
@@ -15,15 +15,23 @@ chmod 775 /opt/immich/current-version.txt
 
 touch /opt/immich/installed-version.txt
 
-if [ $(cat /opt/immich/current-version.txt) = $(cat /opt/immich/installed-version.txt) ]; then
+IMMICH_UPDATE_SKIP=0
+
+if [[ "$(cat /opt/immich/current-version.txt)" == "$(cat /opt/immich/installed-version.txt)" ]]; then
     echo "No new version found, skipping update"
-    exit 0
+    IMMICH_UPDATE_SKIP=1
 fi
 
-docker compose down
-curl -fsSL https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml -o docker-compose.yml
-/opt/immich/add-caddy.sh "$PWD/.."
-docker compose pull --policy always
-docker compose up --remove-orphans -d
-
-cp /opt/immich/current-version.txt /opt/immich/installed-version.txt
+if [ $IMMICH_UPDATE_SKIP -eq 0 ]; then
+   docker compose down
+   curl -fsSL https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml -o docker-compose.yml
+   /opt/immich/add-caddy.sh "$PWD/.."
+   docker compose pull --policy always --quiet
+   if [ "$1" = "skip-run" ]; then 
+      echo "Skipping immich run after update"
+    else
+    # Start immich
+       docker compose up --remove-orphans -d
+    fi
+   cp /opt/immich/current-version.txt /opt/immich/installed-version.txt
+fi

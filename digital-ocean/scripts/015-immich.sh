@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 
 # Add systemd.unified_cgroup_hierarchy=0 to grub
@@ -23,6 +23,10 @@ mkdir -p $HOME/immich-app/caddy
 # Set version
 echo "${application_version}" > /opt/immich/version.txt
 chmod 755 /opt/immich/version.txt
+
+# Set branch
+echo "${ci_branch_name}" > /opt/immich/branch.txt
+chmod 755 /opt/immich/branch.txt
 
 # Set install script
 curl -o- https://raw.githubusercontent.com/immich-app/immich/main/install.sh > /opt/immich/install-temp.sh
@@ -112,10 +116,49 @@ mkdir -p /home/immich/.config/systemd
 
 chown -R immich:immich /home/immich/.config/
 
-# Set up immich as the immich user so that we have a clean ready environment.
+# Reload sysctl.conf to open port 80
+sudo sysctl -p /etc/sysctl.conf
+
+# Set up immich as the immich user so that we have a clean ready environment, and start it
 /bin/su -l -s "/bin/bash" -c 'cd /home/immich ; HOME=/home/immich USER=immich PATH=/usr/bin:/sbin:/usr/sbin:$PATH /opt/immich/init.sh skip-run' immich
 
 echo "immich init done"
+
+### Test the immich install ###
+
+if [[ ! -v IMMICH_TEST_RUN_TIMEOUT ]]; then 
+    # Time to wait for immich to be ready on test.
+    IMMICH_TEST_RUN_TIMEOUT=300
+fi
+
+if [[ ! -v IMMICH_TEST_RUN_ENDPOINT ]]; then 
+    # Endpoint to test the immich install.
+    IMMICH_TEST_RUN_ENDPOINT="https://localhost/api/server/ping"
+fi
+
+if [[ ! -v IMMICH_TEST_RUN_SLEEP_TIME ]]; then 
+    # Time between tests.
+    IMMICH_TEST_RUN_SLEEP_TIME=10
+fi
+
+IMMICH_TEST_RUN_START_TIME=$(date +%s)
+
+IMMICH_TEST_STATUS_CODE=""
+
+
+while [ "$IMMICH_TEST_STATUS_CODE" != "200" ]; do
+    if [ $(($(date +%s) - $IMMICH_TEST_RUN_START_TIME)) -gt $IMMICH_TEST_RUN_TIMEOUT ]; then
+        echo "immich test timed out after $IMMICH_TEST_RUN_TIMEOUT seconds"
+        # Test failed, exit the build as error.
+        exit 1
+    fi
+    sleep $IMMICH_TEST_RUN_SLEEP_TIME
+    echo "Waiting for immich to be ready..."
+    IMMICH_TEST_STATUS_CODE=$(curl -k -s -o /dev/null -w "%{http_code}" $IMMICH_TEST_RUN_ENDPOINT)
+done
+
+echo "immich test successful"
+
 
 # Shut down the immich build.
 
@@ -128,6 +171,8 @@ sudo loginctl enable-linger immich
 
 rm -rf /home/immich/immich-app/
 rm -rf /home/immich/immich-db/
+
+chown -R immich:immich /opt/immich
 
 mkdir -p /var/lib/digitalocean/
 
