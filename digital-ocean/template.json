@@ -77,7 +77,7 @@
         "IMMICH_TEST_RUN_TIMEOUT={{user `immich_test_run_timeout`}}",
         "IMMICH_TEST_RUN_ENDPOINT={{user `immich_test_run_endpoint`}}",
         "IMMICH_TEST_RUN_SLEEP_TIME={{user `immich_test_run_sleep_time`}}",
-        "IMMICH_TEST_PROD_BRANCH={{user `immich_test_run_prod_branch`}}"
+        "IMMICH_TEST_PROD_BRANCH={{user `immich_test_prod_branchh`}}"
       ],
       "scripts": [
         "scripts/010-docker.sh",
