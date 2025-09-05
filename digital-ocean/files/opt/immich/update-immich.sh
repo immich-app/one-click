@@ -31,7 +31,7 @@ if [ $IMMICH_UPDATE_SKIP -eq 0 ]; then
       echo "Skipping immich run after update"
     else
     # Start immich
-       docker compose up --remove-orphans -d
+       docker compose up --remove-orphans -d --quiet-pull
     fi
    cp /opt/immich/current-version.txt /opt/immich/installed-version.txt
 fi

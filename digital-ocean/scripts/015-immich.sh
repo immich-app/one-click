@@ -125,18 +125,17 @@ sudo sysctl -p /etc/sysctl.conf
 echo "immich init done"
 
 ### Test the immich install ###
-
-if [[ ! -v IMMICH_TEST_RUN_TIMEOUT ]]; then 
+if [[ "$IMMICH_TEST_RUN_TIMEOUT" == "" ]]; then 
     # Time to wait for immich to be ready on test.
     IMMICH_TEST_RUN_TIMEOUT=300
 fi
 
-if [[ ! -v IMMICH_TEST_RUN_ENDPOINT ]]; then 
+if [[ "$IMMICH_TEST_RUN_ENDPOINT" == "" ]]; then 
     # Endpoint to test the immich install.
     IMMICH_TEST_RUN_ENDPOINT="https://localhost/api/server/ping"
 fi
 
-if [[ ! -v IMMICH_TEST_RUN_SLEEP_TIME ]]; then 
+if [[ "$IMMICH_TEST_RUN_SLEEP_TIME" == "" ]]; then 
     # Time between tests.
     IMMICH_TEST_RUN_SLEEP_TIME=10
 fi
