@@ -45,7 +45,7 @@
     },
     {
       "type": "file",
-      "source": "files/opt/",
+      "source": "../generic/files/opt/",
       "destination": "/opt/"
     },
     {
