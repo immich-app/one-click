@@ -80,14 +80,14 @@
         "IMMICH_TEST_PROD_BRANCH={{user `immich_test_prod_branchh`}}"
       ],
       "scripts": [
-        "scripts/010-docker.sh",
-        "scripts/011-docker-compose.sh",
-        "scripts/012-grub-opts.sh",
-        "scripts/013-docker-dns.sh",
-        "scripts/015-immich.sh",
-        "scripts/016-ufw-immich.sh",
-        "scripts/020-application-tag.sh",
-        "scripts/90-cleanup.sh",
+        "../generic/scripts/010-docker.sh",
+        "../generic/scripts/011-docker-compose.sh",
+        "../generic/scripts/012-grub-opts.sh",
+        "../generic/scripts/013-docker-dns.sh",
+        "../generic/scripts/015-immich.sh",
+        "../generic/scripts/016-ufw-immich.sh",
+        "../generic/scripts/020-application-tag.sh",
+        "../generic/scripts/90-cleanup.sh",
         "scripts/95-pre-check.sh",
         "scripts/99-img-check.sh"
       ]
