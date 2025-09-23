@@ -66,7 +66,7 @@ packer {
 source "vultr" "immich-snapshot" {
   api_key              = "${var.vultr_api_key}"
   os_id                = "2284"
-  plan_id              = "marketplace-2c-2gb"
+  plan_id              = "vhp-2c-4gb-amd"
   region_id            = "dfw"
   snapshot_description = "Immich Snapshot ${formatdate("YYYY-MM-DD hh:mm", timestamp())}"
   ssh_username         = "root"
@@ -102,12 +102,6 @@ build {
     script = "install-immich-start.sh"
     remote_folder = "/root"
     remote_file = "install-immich-start.sh"
-  }
-
-  provisioner "shell" {
-    script = "install-immich-stop.sh"
-    remote_folder = "/root"
-    remote_file = "install-immich-stop.sh"
   }
 
   provisioner "shell" {
@@ -163,9 +157,8 @@ build {
   }
 
   provisioner "shell" {
-    inline = [
-      "sudo bash -c '/root/install-immich.sh stop'",
-      "sudo rm -f /root/install-immich.sh"
-    ]
+    script = "install-immich-stop.sh"
+    remote_folder = "/root"
+    remote_file = "install-immich-stop.sh"
   }
 }
