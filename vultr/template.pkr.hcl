@@ -1,6 +1,6 @@
 variable "vultr_api_key" {
   type      = string
-  default   = "${env("VULTR_API_TOKEN")}"
+  default   = "${env("VULTR_API_KEY")}"
   sensitive = true
 }
 
@@ -65,7 +65,7 @@ packer {
 
 source "vultr" "immich-snapshot" {
   api_key              = "${var.vultr_api_key}"
-  os_id                = "387"
+  os_id                = "2284"
   plan_id              = "vc2-1c-2gb"
   region_id            = "dfw"
   snapshot_description = "${var.image_name}"

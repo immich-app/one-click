@@ -33,5 +33,5 @@ jobs:
         id: vl_build
         run: "cd ./vultr && packer build template.pkr.hcl"
         env:
-          VULTR_API_TOKEN: ${{ secrets.VULTR_API_TOKEN }}
+          VULTR_API_KEY: ${{ secrets.VULTR_API_TOKEN }}
           GITHUB_IMMICH_BRANCH: ${{ github.ref_name }}
