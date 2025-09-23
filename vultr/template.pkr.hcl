@@ -65,10 +65,10 @@ packer {
 
 source "vultr" "immich-snapshot" {
   api_key              = "${var.vultr_api_key}"
-  os_id                = "2284"
-  plan_id              = "vhp-2c-4gb-amd"
+  os_id                = "387"
+  plan_id              = "vc2-1c-2gb"
   region_id            = "dfw"
-  snapshot_description = "Immich Snapshot ${formatdate("YYYY-MM-DD hh:mm", timestamp())}"
+  snapshot_description = "${var.image_name}"
   ssh_username         = "root"
   state_timeout        = "60m"
 }
