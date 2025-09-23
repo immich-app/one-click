@@ -1,6 +1,6 @@
 variable "vultr_api_key" {
   type      = string
-  default   = "${env("VULTR_API_KEY")}"
+  default   = "${env("VULTR_API_TOKEN")}"
   sensitive = true
 }
 
