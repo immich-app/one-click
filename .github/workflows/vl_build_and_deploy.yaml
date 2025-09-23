@@ -27,10 +27,7 @@ jobs:
 
       - name: Run `packer init`
         id: vl_init
-        run: "packer init ./vultr/template.pkr.hcl"
-        env:
-          VULTR_API_TOKEN: ${{ secrets.VULTR_API_TOKEN }}
-          GITHUB_IMMICH_BRANCH: ${{ github.ref_name }}
+        run: "packer init ./vultr/init.pkr.hcl"
 
       - name: Build vultr snapshot
         id: vl_build
