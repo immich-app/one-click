@@ -1,4 +1,4 @@
-name: DigitalOcean Build and Deploy
+name: Vultr Build and Deploy
 
 on:
   push:
@@ -14,25 +14,26 @@ env:
 jobs:
   packer:
     runs-on: ubuntu-latest
-    name: Run DigitalOcean Build and Deploy
+    name: Run Vultr Build and Deploy
     steps:
       - name: Checkout
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
         with:
           persist-credentials: false
+
       - name: Setup `packer`
         uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232 # v3.1.0
-        id: do_setup
+        id: vl_setup
         with:
           version: "1.10.0" # packer version
 
       - name: Run `packer init`
-        id: do_init
-        run: "packer init ./digital-ocean/init.pkr.hcl"
+        id: vl_init
+        run: "packer init ./vultr/init.pkr.hcl"
 
-      - name: Build digitalocean snapshot
-        id: do_build
-        run: "cd ./digital-ocean && packer build template.json"
+      - name: Build vultr snapshot
+        id: vl_build
+        run: "cd ./vultr && packer build template.pkr.hcl"
         env:
-          DIGITALOCEAN_API_TOKEN: ${{ secrets.DIGITALOCEAN_API_TOKEN }}
+          VULTR_API_KEY: ${{ secrets.VULTR_API_TOKEN }}
           GITHUB_IMMICH_BRANCH: ${{ github.ref_name }}

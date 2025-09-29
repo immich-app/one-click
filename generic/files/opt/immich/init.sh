@@ -89,7 +89,7 @@ sed -i -e "s|DB_DATA_LOCATION=.*|DB_DATA_LOCATION=$HOME\/immich-db\/postgres|g" 
 mkdir -p $HOME/immich-db/
 
 # Set update script
-curl -o- https://raw.githubusercontent.com/immich-app/one-click/refs/heads/$IMMICH_BRANCH_REF_NAME/digital-ocean/files/opt/immich/update-immich.sh  > /tmp/update-immich-temp.sh
+curl -o- https://raw.githubusercontent.com/immich-app/one-click/refs/heads/$IMMICH_BRANCH_REF_NAME/generic/files/opt/immich/update-immich.sh  > /tmp/update-immich-temp.sh
 
 if [ $(grep 'docker-compose.yml' /tmp/update-immich-temp.sh | wc -l) -gt 0 ]; then
    echo "Using new update script."
