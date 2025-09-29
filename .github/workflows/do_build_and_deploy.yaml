@@ -21,7 +21,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup `packer`
-        uses: hashicorp/setup-packer@v3.1.0
+        uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232 # v3.1.0
         id: do_setup
         with:
           version: "1.10.0" # packer version
