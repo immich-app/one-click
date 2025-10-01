@@ -33,7 +33,8 @@ jobs:
 
       - name: Build vultr snapshot
         id: vl_build
-        run: "cd ./vultr && packer build template.pkr.hcl"
+        working-directory: ./vultr
+        run: "packer build template.pkr.hcl"
         env:
           VULTR_API_KEY: ${{ secrets.VULTR_API_TOKEN }}
           GITHUB_IMMICH_BRANCH: ${{ github.ref_name }}

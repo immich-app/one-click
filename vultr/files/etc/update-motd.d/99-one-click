@@ -6,7 +6,7 @@ myip=$(hostname -I | awk '{print$1}')
 cat <<EOF
 ********************************************************************************
 
-Welcome to Vultr's 1-Click Immich Droplet.
+Welcome to Vultr's 1-Click Immich Server.
 
 Service is running under user "immich".
 
