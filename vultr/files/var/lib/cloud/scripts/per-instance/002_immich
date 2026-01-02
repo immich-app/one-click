@@ -9,6 +9,13 @@
 sudo apt-get update
 sudo apt-get upgrade -y
 
+# Force version 1.7 of container.d
+sudo apt install -y --allow-downgrades --allow-change-held-packages containerd.io=$(apt-cache madison containerd.io | grep "containerd.io | 1.7." | head -n1 | grep -Po '1.7.*~noble') ;
+sudo apt-mark hold containerd.io
+sudo systemctl restart containerd
+sudo apt-get install --reinstall docker-ce
+sudo systemctl restart docker
+
 sudo loginctl enable-linger root
 sudo loginctl enable-linger immich
 

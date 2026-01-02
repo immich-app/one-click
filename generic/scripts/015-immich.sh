@@ -14,6 +14,13 @@ sudo apt-get install -y curl dbus-user-session
 sudo apt-get install -y uidmap systemd-container
 sudo apt-get install -y docker-ce-rootless-extras
 
+# Force version 1.7 of container.d
+sudo apt install -y --allow-downgrades --allow-change-held-packages containerd.io=$(apt-cache madison containerd.io | grep "containerd.io | 1.7." | head -n1 | grep -Po '1.7.*~noble') ;
+sudo apt-mark hold containerd.io
+sudo systemctl restart containerd
+sudo apt-get install --reinstall docker-ce
+sudo systemctl restart docker
+
 # Place for global immich scripts
 mkdir -p /opt/immich/
 
@@ -118,6 +125,9 @@ chown -R immich:immich /home/immich/.config/
 
 # Reload sysctl.conf to open port 80
 sudo sysctl -p /etc/sysctl.conf
+
+echo "Setting up dockerd-rootless-prerequisites (Install newuidmap & newgidmap binaries)"
+sudo apt-get install -y uidmap
 
 # Set up immich as the immich user so that we have a clean ready environment, and start it
 /bin/su -l -s "/bin/bash" -c 'cd /home/immich ; HOME=/home/immich USER=immich PATH=/usr/bin:/sbin:/usr/sbin:$PATH /opt/immich/init.sh skip-run' immich
