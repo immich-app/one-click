@@ -2,7 +2,7 @@
 services:
   caddy:
     container_name: immich_caddy
-    image: caddy:2-alpine
+    image: caddy:2-alpine@sha256:86deaf5e3d3408a6ccec08fbb79989783dd26e206ae10bcf78a801dc8c9ab794
     depends_on:
       - immich-server
     ports:
