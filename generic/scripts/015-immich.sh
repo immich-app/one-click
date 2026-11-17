@@ -7,6 +7,18 @@
 #update-grub
 
 
+# Immich needs more memory than a 2GB server has while it starts up, and the
+# server process gets OOM killed without swap. Use a temporary swap file for the
+# build; it is removed at the end of this script and re-created on first boot.
+IMMICH_BUILD_SWAP=0
+if [ -z "$(swapon --show --noheadings)" ] && [ ! -e /swapfile ]; then
+    IMMICH_BUILD_SWAP=1
+    fallocate -l 2G /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+fi
+
 # Prerequisites for rootless docker
 sudo apt-get update
 sudo apt-get upgrade -y
@@ -14,10 +26,6 @@ sudo apt-get install -y curl dbus-user-session
 sudo apt-get install -y uidmap systemd-container
 sudo apt-get install -y docker-ce-rootless-extras
 
-# Force version 1.7 of container.d
-sudo apt install -y --allow-downgrades --allow-change-held-packages containerd.io=$(apt-cache madison containerd.io | grep "containerd.io | 1.7." | head -n1 | grep -Po '1.7.*~noble') ;
-sudo apt-mark hold containerd.io
-sudo systemctl restart containerd
 sudo apt-get install --reinstall docker-ce
 sudo systemctl restart docker
 
@@ -158,6 +166,10 @@ IMMICH_TEST_STATUS_CODE=""
 while [ "$IMMICH_TEST_STATUS_CODE" != "200" ]; do
     if [ $(($(date +%s) - $IMMICH_TEST_RUN_START_TIME)) -gt $IMMICH_TEST_RUN_TIMEOUT ]; then
         echo "immich test timed out after $IMMICH_TEST_RUN_TIMEOUT seconds"
+        # Dump diagnostics so a failed build can be debugged from the log.
+        free -m
+        dmesg | grep -i "out of memory" | tail -n 5
+        /bin/su -l -s "/bin/bash" -c 'export XDG_RUNTIME_DIR=/run/user/$(id -u) DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock ; journalctl --user -u docker -n 30 --no-pager ; docker ps -a ; docker logs --tail 50 immich_server' immich
         # Test failed, exit the build as error.
         exit 1
     fi
@@ -184,6 +196,13 @@ rm -rf /home/immich/immich-db/
 chown -R immich:immich /opt/immich
 
 mkdir -p /var/lib/digitalocean/
+
+# Remove the build swap file so it is not part of the snapshot.
+# Only if this script created it; some providers ship their own swap file.
+if [ "$IMMICH_BUILD_SWAP" = "1" ]; then
+    swapoff /swapfile
+    rm -f /swapfile
+fi
 
 echo "immich snapshot install done."
 
