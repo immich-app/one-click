@@ -26,6 +26,13 @@ sudo apt-get install -y curl dbus-user-session
 sudo apt-get install -y uidmap systemd-container
 sudo apt-get install -y docker-ce-rootless-extras
 
+# Stop the build here if the rootless docker requirements did not install,
+# for example because another process was holding the apt lock.
+if ! command -v newuidmap > /dev/null || ! command -v dockerd-rootless-setuptool.sh > /dev/null; then
+    echo "Rootless docker prerequisites (uidmap, docker-ce-rootless-extras) are not installed"
+    exit 1
+fi
+
 sudo apt-get install --reinstall docker-ce
 sudo systemctl restart docker
 
