@@ -5,14 +5,20 @@
 
 #sudo rm /var/run/docker.sock
 
+# Immich needs more memory than a 2GB server has while it starts up, and the
+# server process gets OOM killed without swap. Add a swap file if there is no swap.
+if [ -z "$(swapon --show --noheadings)" ] && [ ! -f /swapfile ]; then
+    fallocate -l 2G /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+    echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
+
 # Install docker rootless pre-requisites
 sudo apt-get update
 sudo apt-get upgrade -y
 
-# Force version 1.7 of container.d
-sudo apt install -y --allow-downgrades --allow-change-held-packages containerd.io=$(apt-cache madison containerd.io | grep "containerd.io | 1.7." | head -n1 | grep -Po '1.7.*~noble') ;
-sudo apt-mark hold containerd.io
-sudo systemctl restart containerd
 sudo apt-get install --reinstall docker-ce
 sudo systemctl restart docker
 

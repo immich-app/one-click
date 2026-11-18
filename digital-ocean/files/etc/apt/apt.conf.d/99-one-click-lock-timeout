@@ -1,0 +1,3 @@
+// Wait for the dpkg lock instead of failing when another process
+// (for example unattended-upgrades) is using apt at the same time.
+DPkg::Lock::Timeout "600";

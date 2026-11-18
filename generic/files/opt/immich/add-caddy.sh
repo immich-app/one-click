@@ -26,6 +26,19 @@ fi
 
 cp /opt/immich/docker-compose-caddy.yml "$IMMICH_LOCATION/immich-app/docker-compose-caddy.yml"
 
+# Make sure the Caddyfile exists as a regular file. If it was missing when the
+# caddy container was first created, docker creates a directory in its place
+# and the container can never start.
+IMMICH_CADDYFILE="$IMMICH_LOCATION/immich-app/caddy/Caddyfile"
+mkdir -p "$IMMICH_LOCATION/immich-app/caddy"
+if [ -d "$IMMICH_CADDYFILE" ]; then
+    echo "Caddyfile is a directory, replacing it with /opt/immich/Caddyfile"
+    rmdir "$IMMICH_CADDYFILE" || mv "$IMMICH_CADDYFILE" "$IMMICH_CADDYFILE.bak.$(date +%s)"
+fi
+if [ ! -f "$IMMICH_CADDYFILE" ]; then
+    cp /opt/immich/Caddyfile "$IMMICH_CADDYFILE"
+fi
+
 if [ $(cat "$IMMICH_LOCATION/immich-app/docker-compose.yml" | grep "docker-compose-caddy.yml" | wc -l) -gt 0 ]; then
     echo "Caddy is already defined in docker-compose.yml"
 else
